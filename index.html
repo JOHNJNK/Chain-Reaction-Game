@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
+
     <title>Chain Reaction</title>
 </head>
-<script src="gamescript.js"></script>
-<body onload="grid()" style="text-align: center;">
+
+<body style="text-align: center;">
     <h1>Chain Reaction Game</h1>
 
-    <button onclick="reset()"> Reset</button>
+    <!-- <button onclick="reset()"> Reset</button>  -->
+    <div id="gridCreator">
+        Row Size : <input type="number" id="rowSize" value="10">
+        Col Size : <input type="number" id="colSize" value="10">
+        <br><br>
+        <button id="createButton" type="submit">Create</button>
+    </div>
 
-    <!-- <form >
-        Row Size<input type="number" id="rowSize" value="10" >
-        Col Size<input type="number" id="colSize" value="10" >
-        <button onclick="grid()" type="submit">Submit</button>
-    </form> -->
+    <br><br>
+    <div id="grid"></div>
 
-<br><br>
-    <table id="grid"></table>
-    
-
-<p>Current Move By : <span id="player"> Player One(Red)</span></p>
+    <p id="playerStatus">Current Move By : <span id="player"> Player One(Red)</span></p>
 </body>
+
+<script src="gamescript.js"></script>
+
 </html>
