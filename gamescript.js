@@ -1,16 +1,22 @@
 class ChainReaction {
     constructor() {
+        this.playactive = true;
         this.chance = 1;
         this.currentPlayer = 1;
+        this.resetbtn = document.createElement("button");
+        this.resetbtn.textContent = "Reset";
+        this.resetbtn.addEventListener('click', () => {
+            this.reset();
+        });
     }
 
     reset() {
 
-        // document.getElementById("grid").textContent = "";
-        const grid=document.getElementById("tableGrid");
+        const grid = document.getElementById("tableGrid");
         createBlock.style.display = "block";
+        const resultBox = document.getElementById("resultBox");
+        resultBox.remove();
         grid.remove();
-        document.getElementById("player").textContent = "Player One(Red)";
         console.log("Game Over");
     }
 
@@ -23,7 +29,7 @@ class ChainReaction {
         }
     }
 
-    checkForResult(table, game ) {
+    checkForResult(table, game) {
         let playerOne = 0;
         let playerTwo = 0;
         for (let row of table.rows) {
@@ -37,15 +43,27 @@ class ChainReaction {
                 }
             }
         }
-        if (playerOne == 0 && game.chance == 0) {
-            alert("Player Two Wins");
-            game.chance++;
-            game.reset();
-        }
-        if (playerTwo == 0 && this.chance == 0) {
-            alert("Player One Wins");
-            game.chance++;
-            game.reset();
+        if ((playerOne == 0 || playerTwo == 0) && game.chance == 0) {
+
+            game.playactive = false;
+
+            const currentPlayerStatus = document.getElementById("playerStatus");
+            currentPlayerStatus.remove();
+
+            const result = document.getElementById("result");
+            const resultContainer = document.createElement("resultBox");
+            resultContainer.id = "resultBox";
+            result.appendChild(resultContainer);
+            const resultMsg = document.createElement('h2');
+            if (playerOne == 0) {
+                resultMsg.textContent = "Player Two Wins";
+            }
+            else {
+                resultMsg.textContent = "Player One Wins";
+            }
+            resultContainer.appendChild(resultMsg);
+            resultContainer.appendChild(this.resetbtn);
+
         }
         if (playerOne == 0 || playerTwo == 0) {
             game.chance--;
@@ -54,12 +72,12 @@ class ChainReaction {
         console.log(playerOne + "  " + playerTwo + " " + game.chance);
     }
 
-    actionwork(col,game) {
+    actionwork(col, game) {
         const rows = document.getElementById("tableGrid");
         if (game.currentPlayer == 1) {
             col.style.backgroundColor = "red";
         }
-        else{
+        else {
             col.style.backgroundColor = "blue";
         }
 
@@ -71,8 +89,7 @@ class ChainReaction {
         else {
 
             const cols = document.getElementById("row" + parseInt(col.id));
-            
-            console.log(rows);
+
             let colMaxLength = cols.childElementCount - 1;
             let rowMaxLength = rows.childElementCount - 1;
 
@@ -126,6 +143,7 @@ class ChainReaction {
         }
     }
 
+
     grid = (game) => {
 
         let table = document.createElement("table");
@@ -143,6 +161,7 @@ class ChainReaction {
             for (let j = 0; j < 10; j++) {
 
                 let col = document.createElement("td");
+                col.className = "cell";
                 col.id = (i + 1) + "col" + "" + (j + 1);
                 col.style.border = "1px solid black";
                 col.style.margin = "auto";
@@ -150,16 +169,16 @@ class ChainReaction {
                 col.style.backgroundColor = "white";
 
                 col.addEventListener("click", function () {
-                    console.log("clicked")
                     let color = col.style.backgroundColor;
                     let check = false;
 
-                    if (color === "white" || (game.currentPlayer == 1 && color == "red") || (game.currentPlayer == 2 && color == "blue")) {
+                    if (game.playactive == true && (color === "white" || (game.currentPlayer == 1 && color == "red") || (game.currentPlayer == 2 && color == "blue"))) {
                         check = true;
                     }
 
                     if (check) {
-                        game.actionwork(col,game);
+                        console.log(this);
+                        game.actionwork(col, game);
                         if (game.currentPlayer == 1) {
                             game.currentPlayer = 2;
                             document.getElementById("player").textContent = "Player Two(Blue)";
@@ -168,7 +187,7 @@ class ChainReaction {
                             game.currentPlayer = 1;
                             document.getElementById("player").textContent = "Player One(Red)";
                         }
-                        game.checkForResult(table,game);
+                        game.checkForResult(table, game);
                     }
                 });
                 row.appendChild(col);
@@ -176,16 +195,31 @@ class ChainReaction {
             table.appendChild(row);
 
         }
-        return table;
+
+        {/* <p id="playerStatus">Current Move By : <span id="player"> Player One(Red)</span></p> */ }
+
+        const gridblock = document.createElement('div');
+        gridblock.appendChild(table);
+
+        const playerStatus = document.createElement('p');
+        playerStatus.textContent = "Current Move By : ";
+        playerStatus.id = "playerStatus";
+
+        const span = document.createElement("span");
+        span.id = "player";
+        span.textContent = " PlayOne(Red)";
+
+        playerStatus.appendChild(span);
+
+        gridblock.appendChild(table);
+        gridblock.appendChild(playerStatus);
+
+        return gridblock;
     }
 }
 
 const createButton = document.getElementById("createButton");
 const createBlock = document.getElementById("gridCreator");
-
-
-console.log(createButton);
-console.log(createBlock);
 
 
 if (createButton != null) {
