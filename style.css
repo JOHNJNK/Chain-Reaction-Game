@@ -1,0 +1,16 @@
+body {
+    text-align: center;
+}
+
+
+.cell {
+    border: 1px solid black;
+    margin: auto;
+    background-color: white;
+}
+
+#tableGrid {
+    border: 1px solid black;
+    width: 50%;
+    margin: auto;
+}

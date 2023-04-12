@@ -1,11 +1,12 @@
 class ChainReaction {
+
     constructor() {
-        this.playactive = true;
+        this.playActive = true;
         this.chance = 1;
         this.currentPlayer = 1;
-        this.resetbtn = document.createElement("button");
-        this.resetbtn.textContent = "Reset";
-        this.resetbtn.addEventListener('click', () => {
+        this.restBtn = document.createElement("button");
+        this.restBtn.textContent = "Reset";
+        this.restBtn.addEventListener('click', () => {
             this.reset();
         });
     }
@@ -13,15 +14,15 @@ class ChainReaction {
     reset() {
 
         const grid = document.getElementById("tableGrid");
-        createBlock.style.display = "block";
+        createButton.style.display = "inline-block";
         const resultBox = document.getElementById("resultBox");
         resultBox.remove();
         grid.remove();
         console.log("Game Over");
     }
 
-    change(game) {
-        if (game.currentPlayer == 1) {
+    change = () => {
+        if (this.currentPlayer == 1) {
             return "red";
         }
         else {
@@ -29,7 +30,7 @@ class ChainReaction {
         }
     }
 
-    checkForResult(table, game) {
+    checkForResult(table) {
         let playerOne = 0;
         let playerTwo = 0;
         for (let row of table.rows) {
@@ -43,9 +44,9 @@ class ChainReaction {
                 }
             }
         }
-        if ((playerOne == 0 || playerTwo == 0) && game.chance == 0) {
+        if ((playerOne == 0 || playerTwo == 0) && this.chance == 0) {
 
-            game.playactive = false;
+            this.playActive = false;
 
             const currentPlayerStatus = document.getElementById("playerStatus");
             currentPlayerStatus.remove();
@@ -62,25 +63,24 @@ class ChainReaction {
                 resultMsg.textContent = "Player One Wins";
             }
             resultContainer.appendChild(resultMsg);
-            resultContainer.appendChild(this.resetbtn);
+            resultContainer.appendChild(this.restBtn);
 
         }
         if (playerOne == 0 || playerTwo == 0) {
-            game.chance--;
+            this.chance--;
         }
 
-        console.log(playerOne + "  " + playerTwo + " " + game.chance);
+        console.log(playerOne + "  " + playerTwo + " " + this.chance);
     }
 
-    actionwork(col, game) {
+    actionwork(col) {
         const rows = document.getElementById("tableGrid");
-        if (game.currentPlayer == 1) {
+        if (this.currentPlayer == 1) {
             col.style.backgroundColor = "red";
         }
         else {
             col.style.backgroundColor = "blue";
         }
-
 
         if (col.textContent == "*") {
             col.textContent = 1;
@@ -88,10 +88,11 @@ class ChainReaction {
 
         else {
 
-            const cols = document.getElementById("row" + parseInt(col.id));
+            const cols = document.getElementById("row"+parseInt(col.id));
 
-            let colMaxLength = cols.childElementCount - 1;
+
             let rowMaxLength = rows.childElementCount - 1;
+            let colMaxLength = cols.childElementCount - 1;
 
             let num = parseInt(col.textContent) + 1;
             let maxNum = 4;
@@ -115,26 +116,26 @@ class ChainReaction {
                 if (previousRow) {
                     let previousRowCell = previousRow.children[col.cellIndex];
                     if (previousRowCell) {
-                        previousRowCell.style.backgroundColor = game.change(game);
-                        game.actionwork(previousRowCell, game);
+                        previousRowCell.style.backgroundColor = this.change();
+                        this.actionwork(previousRowCell);
                     }
                 }
                 if (nextRow) {
                     let nextRowCell = nextRow.children[col.cellIndex];
                     if (nextRowCell) {
-                        nextRowCell.style.backgroundColor = game.change(game);
-                        game.actionwork(nextRowCell, game);
+                        nextRowCell.style.backgroundColor = this.change();
+                        this.actionwork(nextRowCell);
                     }
                 }
                 let previousCell = col.previousSibling;
                 let nextCell = col.nextSibling;
                 if (previousCell) {
-                    previousCell.style.backgroundColor = game.change(game);
-                    game.actionwork(previousCell, game);
+                    previousCell.style.backgroundColor = this.change();
+                    this.actionwork(previousCell);
                 }
                 if (nextCell) {
-                    nextCell.style.backgroundColor = game.change(game);
-                    game.actionwork(nextCell, game);
+                    nextCell.style.backgroundColor = this.change();
+                    this.actionwork(nextCell);
                 }
             }
             else {
@@ -144,13 +145,11 @@ class ChainReaction {
     }
 
 
-    grid = (game) => {
+    grid() {
 
         let table = document.createElement("table");
         table.id = "tableGrid";
-        table.style.border = "1px solid black";
-        table.style.width = "50%";
-        table.style.margin = "auto";
+
 
         // let dataTable;
         for (let i = 0; i < 10; i++) {
@@ -163,31 +162,27 @@ class ChainReaction {
                 let col = document.createElement("td");
                 col.className = "cell";
                 col.id = (i + 1) + "col" + "" + (j + 1);
-                col.style.border = "1px solid black";
-                col.style.margin = "auto";
                 col.textContent = "*";
-                col.style.backgroundColor = "white";
 
-                col.addEventListener("click", function () {
-                    let color = col.style.backgroundColor;
+                col.addEventListener("click", () => {
+                    let color = getComputedStyle(col, null).getPropertyValue("background-color");
+                    console.log(color);
                     let check = false;
-
-                    if (game.playactive == true && (color === "white" || (game.currentPlayer == 1 && color == "red") || (game.currentPlayer == 2 && color == "blue"))) {
+                    if (this.playActive == true && (color === "rgb(255, 255, 255)" || (this.currentPlayer == 1 && color == "rgb(255, 0, 0)") || (this.currentPlayer == 2 && color == "rgb(0, 0, 255)"))) {
                         check = true;
                     }
-
+                    console.log(check);
                     if (check) {
-                        console.log(this);
-                        game.actionwork(col, game);
-                        if (game.currentPlayer == 1) {
-                            game.currentPlayer = 2;
+                        this.actionwork(col);
+                        if (this.currentPlayer == 1) {
+                            this.currentPlayer = 2;
                             document.getElementById("player").textContent = "Player Two(Blue)";
                         }
                         else {
-                            game.currentPlayer = 1;
+                            this.currentPlayer = 1;
                             document.getElementById("player").textContent = "Player One(Red)";
                         }
-                        game.checkForResult(table, game);
+                        this.checkForResult(table);
                     }
                 });
                 row.appendChild(col);
@@ -195,8 +190,6 @@ class ChainReaction {
             table.appendChild(row);
 
         }
-
-        {/* <p id="playerStatus">Current Move By : <span id="player"> Player One(Red)</span></p> */ }
 
         const gridblock = document.createElement('div');
         gridblock.appendChild(table);
@@ -219,17 +212,16 @@ class ChainReaction {
 }
 
 const createButton = document.getElementById("createButton");
-const createBlock = document.getElementById("gridCreator");
 
 
 if (createButton != null) {
     createButton.addEventListener('click', () => {
         const game = new ChainReaction();
-        const grid = game.grid(game);
+        const grid = game.grid();
 
         const table = document.getElementById("grid");
         table.appendChild(grid);
-        createBlock.style.display = "none";
+        createButton.style.display = "none";
         // createBlock.remove();
     });
 }
